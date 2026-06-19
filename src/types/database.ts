@@ -35,6 +35,9 @@ export interface CierreDiaRow {
 export interface MantencionRow {
   id: string; bus_id: string; fecha: string; tipo: string | null; km_actual: number | null; descripcion: string | null; costo_mano_obra: number; created_at: string
 }
+export interface MantencionItemRow {
+  id: string; mantencion_id: string; item_id: string; cantidad: number; costo_unitario: number
+}
 export interface MovimientoInventarioRow {
   id: string; item_id: string; tipo: MovimientoTipo; cantidad: number; costo_unitario: number
   fecha: string; referencia: string | null; mantencion_id: string | null; notas: string | null; created_at: string
@@ -126,6 +129,12 @@ export interface Database {
         Update: { bus_id?: string; fecha?: string; tipo?: string | null; km_actual?: number | null; descripcion?: string | null; costo_mano_obra?: number }
         Relationships: []
       }
+      mantencion_items: {
+        Row: MantencionItemRow
+        Insert: { id?: string; mantencion_id: string; item_id: string; cantidad: number; costo_unitario?: number }
+        Update: { mantencion_id?: string; item_id?: string; cantidad?: number; costo_unitario?: number }
+        Relationships: []
+      }
       movimientos_inventario: {
         Row: MovimientoInventarioRow
         Insert: { id?: string; item_id: string; tipo: MovimientoTipo; cantidad: number; costo_unitario?: number; fecha?: string; referencia?: string | null; mantencion_id?: string | null; notas?: string | null }
@@ -164,6 +173,7 @@ export type InformeDiario = InformeDiarioRow
 export type InformeDiarioInsert = Database['public']['Tables']['informes_diarios']['Insert']
 export type CierreDia = CierreDiaRow
 export type Mantencion = MantencionRow
+export type MantencionItem = MantencionItemRow
 export type MovimientoInventario = MovimientoInventarioRow
 
 export type BusConModelo = BusRow & { modelos_bus: ModeloBusRow | null }
