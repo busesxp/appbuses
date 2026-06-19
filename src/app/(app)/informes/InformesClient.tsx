@@ -238,11 +238,14 @@ export default function InformesClient({ fecha, informes: initialInformes, buses
               <th className="text-left px-3 py-2.5 font-medium text-slate-600">Conductor</th>
               <th className="text-left px-3 py-2.5 font-medium text-slate-600">Relevo</th>
               <th className="text-right px-3 py-2.5 font-medium text-slate-600">Cta.Cond</th>
+              <th className="text-right px-3 py-2.5 font-medium text-slate-600">Vta/Cond</th>
               <th className="text-right px-3 py-2.5 font-medium text-slate-600">Cta.Rel</th>
+              <th className="text-right px-3 py-2.5 font-medium text-slate-600">Vta/Rel</th>
               <th className="text-right px-3 py-2.5 font-medium text-slate-600">Subtotal</th>
               <th className="text-right px-3 py-2.5 font-medium text-slate-600">Petróleo $</th>
               <th className="text-right px-3 py-2.5 font-medium text-slate-600">Litros</th>
               <th className="text-right px-3 py-2.5 font-medium text-slate-600">Km</th>
+              <th className="text-right px-3 py-2.5 font-medium text-slate-600">Km/L</th>
               <th className="text-right px-3 py-2.5 font-medium text-slate-600">Gastos</th>
               <th className="text-right px-3 py-2.5 font-medium text-slate-600">Total</th>
               <th className="text-center px-3 py-2.5 font-medium text-slate-600">CL</th>
@@ -250,39 +253,51 @@ export default function InformesClient({ fecha, informes: initialInformes, buses
             </tr>
           </thead>
           <tbody>
-            {informes.map(inf => (
-              <tr key={inf.id} className="border-b border-slate-100 hover:bg-slate-50">
-                <td className="px-3 py-2 font-mono font-semibold text-slate-900">{inf.patente}</td>
-                <td className="px-3 py-2 text-slate-600">{inf.conductor_nombre || '—'}</td>
-                <td className="px-3 py-2 text-slate-500">{inf.relevo_nombre || '—'}</td>
-                <td className="px-3 py-2 text-right text-slate-700">{fmt(inf.cta_cond)}</td>
-                <td className="px-3 py-2 text-right text-slate-700">{fmt(inf.cta_rel)}</td>
-                <td className="px-3 py-2 text-right font-medium text-slate-900">{fmt(inf.subtotal)}</td>
-                <td className="px-3 py-2 text-right text-amber-600">{fmt(inf.petrol_monto)}</td>
-                <td className="px-3 py-2 text-right text-slate-500">{fmtNum(inf.petrol_litros, 1)} L</td>
-                <td className="px-3 py-2 text-right text-slate-500">{fmtNum(inf.km_recorridos)} km</td>
-                <td className="px-3 py-2 text-right text-slate-600">{fmt(inf.gastos_caja)}</td>
-                <td className={cn('px-3 py-2 text-right font-bold', (inf.total_neto ?? 0) >= 0 ? 'text-green-700' : 'text-red-600')}>
-                  {fmt(inf.total_neto)}
-                </td>
-                <td className="px-3 py-2 text-center">
-                  {inf.check_list
-                    ? <span className="text-green-600">✓</span>
-                    : <span className="text-slate-300">—</span>
-                  }
-                </td>
-                <td className="px-3 py-2">
-                  <button onClick={() => openEdit(inf)} className="text-slate-400 hover:text-blue-600">
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                    </svg>
-                  </button>
-                </td>
-              </tr>
-            ))}
+            {informes.map(inf => {
+              const kmL = inf.cons_xkm && inf.cons_xkm > 0 ? 1 / inf.cons_xkm : null
+              return (
+                <tr key={inf.id} className="border-b border-slate-100 hover:bg-slate-50">
+                  <td className="px-3 py-2 font-mono font-semibold text-slate-900">{inf.patente}</td>
+                  <td className="px-3 py-2 text-slate-600">{inf.conductor_nombre || '—'}</td>
+                  <td className="px-3 py-2 text-slate-500">{inf.relevo_nombre || '—'}</td>
+                  <td className="px-3 py-2 text-right text-slate-700">{fmt(inf.cta_cond)}</td>
+                  <td className="px-3 py-2 text-right text-slate-500 text-xs">
+                    {inf.pro_cond != null ? fmt(inf.pro_cond) : '—'}
+                  </td>
+                  <td className="px-3 py-2 text-right text-slate-700">{fmt(inf.cta_rel)}</td>
+                  <td className="px-3 py-2 text-right text-slate-500 text-xs">
+                    {inf.pro_rel != null ? fmt(inf.pro_rel) : '—'}
+                  </td>
+                  <td className="px-3 py-2 text-right font-medium text-slate-900">{fmt(inf.subtotal)}</td>
+                  <td className="px-3 py-2 text-right text-amber-600">{fmt(inf.petrol_monto)}</td>
+                  <td className="px-3 py-2 text-right text-slate-500">{fmtNum(inf.petrol_litros, 1)} L</td>
+                  <td className="px-3 py-2 text-right text-slate-500">{fmtNum(inf.km_recorridos)} km</td>
+                  <td className="px-3 py-2 text-right text-blue-600 font-medium">
+                    {kmL != null ? fmtNum(kmL, 1) : '—'}
+                  </td>
+                  <td className="px-3 py-2 text-right text-slate-600">{fmt(inf.gastos_caja)}</td>
+                  <td className={cn('px-3 py-2 text-right font-bold', (inf.total_neto ?? 0) >= 0 ? 'text-green-700' : 'text-red-600')}>
+                    {fmt(inf.total_neto)}
+                  </td>
+                  <td className="px-3 py-2 text-center">
+                    {inf.check_list
+                      ? <span className="text-green-600">✓</span>
+                      : <span className="text-slate-300">—</span>
+                    }
+                  </td>
+                  <td className="px-3 py-2">
+                    <button onClick={() => openEdit(inf)} className="text-slate-400 hover:text-blue-600">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                      </svg>
+                    </button>
+                  </td>
+                </tr>
+              )
+            })}
             {informes.length === 0 && (
               <tr>
-                <td colSpan={13} className="px-4 py-8 text-center text-slate-400">
+                <td colSpan={16} className="px-4 py-8 text-center text-slate-400">
                   No hay registros para esta fecha
                 </td>
               </tr>
