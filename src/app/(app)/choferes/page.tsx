@@ -1,10 +1,14 @@
+import { createClient } from '@/lib/supabase/server'
+import ChoferesClient from './ChoferesClient'
+
 export const dynamic = 'force-dynamic'
 
-export default function Page() {
-  return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold text-slate-900 capitalize">choferes</h1>
-      <p className="text-slate-500 mt-2">Módulo en construcción</p>
-    </div>
-  )
+export default async function ChoferesPage() {
+  const supabase = await createClient()
+  const { data: choferes } = await supabase
+    .from('choferes')
+    .select('*')
+    .order('nombre')
+
+  return <ChoferesClient choferes={choferes ?? []} />
 }
