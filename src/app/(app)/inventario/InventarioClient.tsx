@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { cn } from '@/lib/utils/cn'
+import ImportarFactura from './ImportarFactura'
 
 interface Categoria { id: string; nombre: string }
 interface Item {
@@ -142,6 +143,10 @@ export default function InventarioClient({ items: initial, categorias }: { items
           <p className="text-sm text-slate-500 mt-0.5">{items.length} ítems en catálogo</p>
         </div>
         <div className="flex gap-2">
+          <ImportarFactura
+            itemsCatalogo={items.map(i => ({ id: i.id, nombre: i.nombre, costo_referencia: i.costo_referencia, unidad: i.unidad }))}
+            onImportado={() => router.refresh()}
+          />
           <button
             onClick={() => { setMovForm(EMPTY_MOV); setError(null); setShowMovForm(true) }}
             className="flex items-center gap-2 px-4 py-2 bg-slate-700 hover:bg-slate-800 text-white text-sm font-medium rounded-lg transition-colors"
