@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import type { InformeDiarioVista, CierreDia } from '@/types/database'
@@ -58,6 +58,20 @@ export default function InformesClient({ fecha, informes: initialInformes, buses
   const [fechaVer, setFechaVer] = useState(fecha)
   const [showCierreForm, setShowCierreForm] = useState(false)
   const [cierreForm, setCierreForm] = useState({ gastos_oficina: '', deposito: '', notas: '' })
+  const [bonoAlerta, setBonoAlerta] = useState<{ patente: string; conductor: string; promVuelta: number }[]>([])
+
+  useEffect(() => {
+    const destacados = informes
+      .map(inf => {
+        const totalVueltas = (inf.vueltas_cond ?? 0) + (inf.vueltas_rel ?? 0)
+        const promVuelta = totalVueltas > 0 && inf.subtotal != null ? inf.subtotal / totalVueltas : null
+        return promVuelta && promVuelta > 70_000
+          ? { patente: inf.patente, conductor: inf.conductor_nombre || 'Sin nombre', promVuelta }
+          : null
+      })
+      .filter(Boolean) as { patente: string; conductor: string; promVuelta: number }[]
+    setBonoAlerta(destacados)
+  }, [informes])
 
   function num(v: string) { return v ? parseFloat(v) : 0 }
 
@@ -272,8 +286,22 @@ export default function InformesClient({ fecha, informes: initialInformes, buses
                     {inf.pro_rel != null ? fmt(inf.pro_rel) : '—'}
                   </td>
                   <td className="px-3 py-2 text-right font-medium text-slate-900">{fmt(inf.subtotal)}</td>
-                  <td className="px-3 py-2 text-right font-semibold text-indigo-600">
-                    {promVuelta != null ? fmt(promVuelta) : <span className="text-slate-300 font-normal text-xs">sin vueltas</span>}
+                  <td className={cn(
+                    'px-3 py-2 text-right font-bold',
+                    promVuelta == null ? 'text-slate-300' :
+                    promVuelta > 70_000 ? 'text-yellow-600 bg-yellow-50' :
+                    promVuelta > 40_000 ? 'text-blue-600' :
+                    promVuelta > 35_000 ? 'text-amber-500' :
+                    'text-red-600'
+                  )}>
+                    {promVuelta != null ? (
+                      <span className="flex items-center justify-end gap-1">
+                        {promVuelta > 70_000 && <span title="¡Candidato a bono!">🏆</span>}
+                        {fmt(promVuelta)}
+                      </span>
+                    ) : (
+                      <span className="font-normal text-xs">sin vueltas</span>
+                    )}
                   </td>
                   <td className="px-3 py-2 text-right text-amber-600">{fmt(inf.petrol_monto)}</td>
                   <td className="px-3 py-2 text-right text-slate-500">{fmtNum(inf.petrol_litros, 1)} L</td>
@@ -345,6 +373,44 @@ export default function InformesClient({ fecha, informes: initialInformes, buses
           </div>
         </div>
       </div>
+
+      {/* Popup bono conductor */}
+      {bonoAlerta.length > 0 && (
+        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
+            <div className="bg-gradient-to-br from-yellow-400 to-amber-500 px-6 py-6 text-center">
+              <div className="text-5xl mb-2">🏆</div>
+              <h2 className="text-2xl font-black text-white drop-shadow">¡Rendimiento excepcional!</h2>
+              <p className="text-yellow-100 text-sm mt-1">Promedio por vuelta superior a $70.000</p>
+            </div>
+            <div className="px-6 py-5 space-y-3">
+              {bonoAlerta.map(b => (
+                <div key={b.patente} className="flex items-center justify-between bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
+                  <div>
+                    <p className="font-bold text-slate-900">{b.conductor}</p>
+                    <p className="text-xs text-slate-500">Bus {b.patente}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-xl font-black text-amber-600">{fmt(b.promVuelta)}</p>
+                    <p className="text-xs text-slate-500">por vuelta</p>
+                  </div>
+                </div>
+              ))}
+              <p className="text-sm text-slate-500 text-center pt-1">
+                Considera generar un bono o premio para {bonoAlerta.length === 1 ? 'este conductor' : 'estos conductores'}.
+              </p>
+            </div>
+            <div className="px-6 pb-5">
+              <button
+                onClick={() => setBonoAlerta([])}
+                className="w-full py-3 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl transition-colors text-sm"
+              >
+                Entendido
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Modal de formulario de informe */}
       {showForm && (
