@@ -238,9 +238,9 @@ export default function InformesClient({ fecha, informes: initialInformes, buses
               <th className="text-left px-3 py-2.5 font-medium text-slate-600">Conductor</th>
               <th className="text-left px-3 py-2.5 font-medium text-slate-600">Relevo</th>
               <th className="text-right px-3 py-2.5 font-medium text-slate-600">Cta.Cond</th>
-              <th className="text-right px-3 py-2.5 font-medium text-slate-600">Vta/Cond</th>
+              <th className="text-right px-3 py-2.5 font-medium text-slate-600">Prom/vuelta Cond</th>
               <th className="text-right px-3 py-2.5 font-medium text-slate-600">Cta.Rel</th>
-              <th className="text-right px-3 py-2.5 font-medium text-slate-600">Vta/Rel</th>
+              <th className="text-right px-3 py-2.5 font-medium text-slate-600">Prom/vuelta Rel</th>
               <th className="text-right px-3 py-2.5 font-medium text-slate-600">Subtotal</th>
               <th className="text-right px-3 py-2.5 font-medium text-indigo-600 whitespace-nowrap">$/Vuelta</th>
               <th className="text-right px-3 py-2.5 font-medium text-slate-600">Petróleo $</th>
