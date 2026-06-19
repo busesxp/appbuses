@@ -42,6 +42,7 @@ const EMPTY_FORM = {
   km_recorridos: '',
   gastos_caja: '',
   bonos: '',
+  otros: '',
   check_list: false as boolean,
   notas: '',
 }
@@ -76,7 +77,7 @@ export default function InformesClient({ fecha, informes: initialInformes, buses
   function num(v: string) { return v ? parseFloat(v) : 0 }
 
   const subtotal = num(form.cta_cond) + num(form.cta_rel)
-  const totalNeto = subtotal - num(form.ant_cond) - num(form.ant_rel) - num(form.petrol_monto) - num(form.gastos_caja) - num(form.bonos)
+  const totalNeto = subtotal - num(form.ant_cond) - num(form.ant_rel) - num(form.petrol_monto) - num(form.gastos_caja) - num(form.bonos) - num(form.otros)
   const proCond = num(form.vueltas_cond) > 0 ? num(form.cta_cond) / num(form.vueltas_cond) : null
   const proRel = num(form.vueltas_rel) > 0 ? num(form.cta_rel) / num(form.vueltas_rel) : null
 
@@ -112,6 +113,7 @@ export default function InformesClient({ fecha, informes: initialInformes, buses
       km_recorridos: inf.km_recorridos?.toString() ?? '',
       gastos_caja: inf.gastos_caja?.toString() ?? '',
       bonos: inf.bonos?.toString() ?? '',
+      otros: inf.otros?.toString() ?? '',
       check_list: inf.check_list ?? false,
       notas: inf.notas ?? '',
     })
@@ -144,6 +146,7 @@ export default function InformesClient({ fecha, informes: initialInformes, buses
       km_recorridos: num(form.km_recorridos),
       gastos_caja: num(form.gastos_caja),
       bonos: num(form.bonos),
+      otros: num(form.otros),
       check_list: form.check_list,
       notas: form.notas || null,
     }
@@ -506,9 +509,10 @@ export default function InformesClient({ fecha, informes: initialInformes, buses
               {/* Gastos y bonos */}
               <div>
                 <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-3">Gastos y bonos</p>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-3 gap-3">
                   <F label="Gastos caja $"><input type="number" value={form.gastos_caja} onChange={e => setForm(f => ({ ...f, gastos_caja: e.target.value }))} className="inp" /></F>
                   <F label="Bonos $"><input type="number" value={form.bonos} onChange={e => setForm(f => ({ ...f, bonos: e.target.value }))} className="inp" /></F>
+                  <F label="Otros $"><input type="number" value={form.otros} onChange={e => setForm(f => ({ ...f, otros: e.target.value }))} className="inp" /></F>
                 </div>
               </div>
 

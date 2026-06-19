@@ -27,7 +27,7 @@ export interface InformeDiarioRow {
   cta_cond: number; cta_rel: number; vueltas_cond: number; vueltas_rel: number
   ant_cond: number; ant_rel: number; vuel_cond: number; vuel_rel: number
   petrol_monto: number; petrol_litros: number; km_recorridos: number
-  gastos_caja: number; bonos: number; check_list: boolean; notas: string | null; created_at: string; updated_at: string
+  gastos_caja: number; bonos: number; otros: number; check_list: boolean; notas: string | null; created_at: string; updated_at: string
 }
 export interface CierreDiaRow {
   id: string; fecha: string; gastos_oficina: number; deposito: number; notas: string | null; created_at: string
@@ -106,14 +106,14 @@ export interface Database {
           cta_cond?: number; cta_rel?: number; vueltas_cond?: number; vueltas_rel?: number
           ant_cond?: number; ant_rel?: number; vuel_cond?: number; vuel_rel?: number
           petrol_monto?: number; petrol_litros?: number; km_recorridos?: number
-          gastos_caja?: number; bonos?: number; check_list?: boolean; notas?: string | null
+          gastos_caja?: number; bonos?: number; otros?: number; check_list?: boolean; notas?: string | null
         }
         Update: {
           bus_id?: string; fecha?: string; conductor_id?: string | null; relevo_id?: string | null
           cta_cond?: number; cta_rel?: number; vueltas_cond?: number; vueltas_rel?: number
           ant_cond?: number; ant_rel?: number; vuel_cond?: number; vuel_rel?: number
           petrol_monto?: number; petrol_litros?: number; km_recorridos?: number
-          gastos_caja?: number; bonos?: number; check_list?: boolean; notas?: string | null
+          gastos_caja?: number; bonos?: number; otros?: number; check_list?: boolean; notas?: string | null
         }
         Relationships: []
       }
