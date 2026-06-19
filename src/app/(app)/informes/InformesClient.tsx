@@ -26,6 +26,7 @@ interface Props {
 
 const EMPTY_FORM = {
   bus_id: '',
+  fecha: '',
   conductor_id: '',
   relevo_id: '',
   cta_cond: '',
@@ -65,8 +66,14 @@ export default function InformesClient({ fecha, informes: initialInformes, buses
   const proCond = num(form.vueltas_cond) > 0 ? num(form.cta_cond) / num(form.vueltas_cond) : null
   const proRel = num(form.vueltas_rel) > 0 ? num(form.cta_rel) / num(form.vueltas_rel) : null
 
+  function ayer() {
+    const d = new Date()
+    d.setDate(d.getDate() - 1)
+    return d.toISOString().split('T')[0]
+  }
+
   function openNew() {
-    setForm(EMPTY_FORM)
+    setForm({ ...EMPTY_FORM, fecha: ayer() })
     setEditingId(null)
     setError(null)
     setShowForm(true)
@@ -75,6 +82,7 @@ export default function InformesClient({ fecha, informes: initialInformes, buses
   function openEdit(inf: InformeDiarioVista) {
     setForm({
       bus_id: inf.bus_id,
+      fecha: inf.fecha ?? fechaVer,
       conductor_id: inf.conductor_id ?? '',
       relevo_id: inf.relevo_id ?? '',
       cta_cond: inf.cta_cond?.toString() ?? '',
@@ -106,7 +114,7 @@ export default function InformesClient({ fecha, informes: initialInformes, buses
     const supabase = createClient()
     const payload = {
       bus_id: form.bus_id,
-      fecha: fechaVer,
+      fecha: form.fecha || fechaVer,
       conductor_id: form.conductor_id || null,
       relevo_id: form.relevo_id || null,
       cta_cond: num(form.cta_cond),
@@ -323,7 +331,7 @@ export default function InformesClient({ fecha, informes: initialInformes, buses
           <div className="bg-white rounded-t-2xl sm:rounded-xl shadow-xl w-full sm:max-w-2xl max-h-[95vh] overflow-y-auto">
             <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between sticky top-0 bg-white z-10">
               <h2 className="font-semibold text-slate-900">
-                {editingId ? 'Editar registro' : 'Nuevo registro'} — {fechaVer}
+                {editingId ? 'Editar registro' : 'Nuevo registro'}
               </h2>
               <button onClick={() => setShowForm(false)} className="text-slate-400 hover:text-slate-600">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -333,6 +341,16 @@ export default function InformesClient({ fecha, informes: initialInformes, buses
             </div>
 
             <div className="px-6 py-4 space-y-5">
+              {/* Fecha del registro */}
+              <F label="Fecha del registro">
+                <input
+                  type="date"
+                  value={form.fecha}
+                  onChange={e => setForm(f => ({ ...f, fecha: e.target.value }))}
+                  className="inp"
+                />
+              </F>
+
               {/* Bus */}
               <div className="grid grid-cols-3 gap-4">
                 <div className="col-span-1">
