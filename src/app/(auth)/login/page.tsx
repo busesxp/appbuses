@@ -35,11 +35,10 @@ export default function LoginPage() {
       <div className="w-full max-w-sm">
         <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-8">
           <div className="mb-8 text-center">
-            <div className="flex justify-center mb-4">
-              <Image src="/logo.png" alt="Buses XP" width={100} height={64} className="object-contain" />
+            <div className="flex justify-center mb-6">
+              <Image src="/logo.png" alt="Buses XP" width={160} height={90} className="object-contain" />
             </div>
-            <h1 className="text-xl font-bold text-slate-900">Buses XP</h1>
-            <p className="text-sm text-slate-500 mt-1">Gestión de Flota — Grupo XP</p>
+            <p className="text-sm text-slate-500">Gestión de Flota — Grupo XP</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">

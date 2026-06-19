@@ -68,14 +68,9 @@ export function Sidebar() {
 
   return (
     <aside className="w-56 bg-slate-900 min-h-screen flex flex-col">
-      <div className="p-4 border-b border-slate-700">
-        <div className="flex items-center gap-3">
-          <Image src="/logo.png" alt="Buses XP" width={48} height={32} className="object-contain" />
-          <div>
-            <p className="text-white font-semibold text-sm leading-none">Buses XP</p>
-            <p className="text-slate-400 text-xs mt-0.5">Grupo XP</p>
-          </div>
-        </div>
+      <div className="p-5 border-b border-slate-700">
+        <Image src="/logo.png" alt="Buses XP" width={120} height={60} className="object-contain" />
+        <p className="text-slate-400 text-xs mt-2">Gestión de Flota</p>
       </div>
 
       <nav className="flex-1 p-2 space-y-0.5">
