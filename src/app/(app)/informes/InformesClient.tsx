@@ -242,6 +242,7 @@ export default function InformesClient({ fecha, informes: initialInformes, buses
               <th className="text-right px-3 py-2.5 font-medium text-slate-600">Cta.Rel</th>
               <th className="text-right px-3 py-2.5 font-medium text-slate-600">Vta/Rel</th>
               <th className="text-right px-3 py-2.5 font-medium text-slate-600">Subtotal</th>
+              <th className="text-right px-3 py-2.5 font-medium text-indigo-600 whitespace-nowrap">$/Vuelta</th>
               <th className="text-right px-3 py-2.5 font-medium text-slate-600">Petróleo $</th>
               <th className="text-right px-3 py-2.5 font-medium text-slate-600">Litros</th>
               <th className="text-right px-3 py-2.5 font-medium text-slate-600">Km</th>
@@ -255,6 +256,8 @@ export default function InformesClient({ fecha, informes: initialInformes, buses
           <tbody>
             {informes.map(inf => {
               const kmL = inf.cons_xkm && inf.cons_xkm > 0 ? 1 / inf.cons_xkm : null
+              const totalVueltas = (inf.vueltas_cond ?? 0) + (inf.vueltas_rel ?? 0)
+              const promVuelta = totalVueltas > 0 && inf.subtotal != null ? inf.subtotal / totalVueltas : null
               return (
                 <tr key={inf.id} className="border-b border-slate-100 hover:bg-slate-50">
                   <td className="px-3 py-2 font-mono font-semibold text-slate-900">{inf.patente}</td>
@@ -269,6 +272,9 @@ export default function InformesClient({ fecha, informes: initialInformes, buses
                     {inf.pro_rel != null ? fmt(inf.pro_rel) : '—'}
                   </td>
                   <td className="px-3 py-2 text-right font-medium text-slate-900">{fmt(inf.subtotal)}</td>
+                  <td className="px-3 py-2 text-right font-semibold text-indigo-600">
+                    {promVuelta != null ? fmt(promVuelta) : <span className="text-slate-300 font-normal text-xs">sin vueltas</span>}
+                  </td>
                   <td className="px-3 py-2 text-right text-amber-600">{fmt(inf.petrol_monto)}</td>
                   <td className="px-3 py-2 text-right text-slate-500">{fmtNum(inf.petrol_litros, 1)} L</td>
                   <td className="px-3 py-2 text-right text-slate-500">{fmtNum(inf.km_recorridos)} km</td>
@@ -297,7 +303,7 @@ export default function InformesClient({ fecha, informes: initialInformes, buses
             })}
             {informes.length === 0 && (
               <tr>
-                <td colSpan={16} className="px-4 py-8 text-center text-slate-400">
+                <td colSpan={17} className="px-4 py-8 text-center text-slate-400">
                   No hay registros para esta fecha
                 </td>
               </tr>
