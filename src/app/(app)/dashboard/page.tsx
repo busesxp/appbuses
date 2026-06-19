@@ -9,6 +9,15 @@ function hace(dias: number) {
   return d.toISOString().split('T')[0]
 }
 
+function inicioMes() {
+  const d = new Date()
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-01`
+}
+
+function nombreMes() {
+  return new Date().toLocaleDateString('es-CL', { month: 'long', year: 'numeric' })
+}
+
 function fmt(n: number | null | undefined) {
   if (n == null) return '—'
   return new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP', maximumFractionDigits: 0 }).format(n)
@@ -23,6 +32,7 @@ export default async function DashboardPage() {
     { data: kmOdometro },
     { data: consumoData },
     { data: informesRecientes },
+    { data: informesMes },
   ] = await Promise.all([
     supabase.from('buses').select('id, patente, estado').order('patente'),
 
@@ -36,7 +46,17 @@ export default async function DashboardPage() {
       .select('bus_id, patente, fecha, subtotal, total_neto, petrol_monto, km_por_litro')
       .gte('fecha', hace(7))
       .order('fecha', { ascending: false }),
+
+    supabase.from('v_informes_diarios')
+      .select('subtotal, total_neto, petrol_monto, fecha')
+      .gte('fecha', inicioMes()),
   ])
+
+  // ── Acumulado del mes ─────────────────────────────────────────────────────
+  const diasConDatos = new Set((informesMes ?? []).map(r => r.fecha)).size
+  const mesBoletaje  = (informesMes ?? []).reduce((s, r) => s + (r.subtotal    ?? 0), 0)
+  const mesNeto      = (informesMes ?? []).reduce((s, r) => s + (r.total_neto  ?? 0), 0)
+  const mesCombust   = (informesMes ?? []).reduce((s, r) => s + (r.petrol_monto ?? 0), 0)
 
   // ── Estado de la flota ────────────────────────────────────────────────────
   const activos   = (todosLosBuses ?? []).filter(b => b.estado === 'activo')
@@ -154,6 +174,27 @@ export default async function DashboardPage() {
           </div>
         </section>
       )}
+
+      {/* Acumulado del mes */}
+      <section>
+        <h2 className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-3">
+          Acumulado {nombreMes()} <span className="text-slate-300 font-normal normal-case">({diasConDatos} día{diasConDatos !== 1 ? 's' : ''} con datos)</span>
+        </h2>
+        <div className="grid grid-cols-3 gap-3">
+          <div className="bg-white rounded-xl border border-slate-200 p-4">
+            <p className="text-xs text-slate-500 mb-1">Boletaje total</p>
+            <p className="text-xl font-bold text-blue-600">{fmt(mesBoletaje)}</p>
+          </div>
+          <div className="bg-white rounded-xl border border-slate-200 p-4">
+            <p className="text-xs text-slate-500 mb-1">Total neto</p>
+            <p className={`text-xl font-bold ${mesNeto >= 0 ? 'text-green-600' : 'text-red-500'}`}>{fmt(mesNeto)}</p>
+          </div>
+          <div className="bg-white rounded-xl border border-slate-200 p-4">
+            <p className="text-xs text-slate-500 mb-1">Combustible</p>
+            <p className="text-xl font-bold text-amber-600">{fmt(mesCombust)}</p>
+          </div>
+        </div>
+      </section>
 
       {/* Buses sin informe */}
       {patentesSinInforme.length > 0 && (
