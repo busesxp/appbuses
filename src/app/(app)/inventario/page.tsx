@@ -1,10 +1,21 @@
+import { createClient } from '@/lib/supabase/server'
+import InventarioClient from './InventarioClient'
+
 export const dynamic = 'force-dynamic'
 
-export default function Page() {
-  return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold text-slate-900 capitalize">inventario</h1>
-      <p className="text-slate-500 mt-2">Módulo en construcción</p>
-    </div>
-  )
+export default async function InventarioPage() {
+  const supabase = await createClient()
+
+  const [{ data: items }, { data: categorias }] = await Promise.all([
+    supabase
+      .from('items_catalogo')
+      .select('*, categorias_item(nombre)')
+      .order('nombre'),
+    supabase
+      .from('categorias_item')
+      .select('*')
+      .order('nombre'),
+  ])
+
+  return <InventarioClient items={items ?? []} categorias={categorias ?? []} />
 }
