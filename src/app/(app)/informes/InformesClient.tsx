@@ -262,7 +262,8 @@ export default function InformesClient({ fecha, informes: initialInformes, buses
               <th className="text-right px-3 py-2.5 font-medium text-indigo-600 whitespace-nowrap">$/Vuelta</th>
               <th className="text-right px-3 py-2.5 font-medium text-slate-600">Petróleo $</th>
               <th className="text-right px-3 py-2.5 font-medium text-slate-600">Litros</th>
-              <th className="text-right px-3 py-2.5 font-medium text-slate-600">Km</th>
+              <th className="text-right px-3 py-2.5 font-medium text-slate-600">Odómetro</th>
+              <th className="text-right px-3 py-2.5 font-medium text-slate-600">Km entre cargas</th>
               <th className="text-right px-3 py-2.5 font-medium text-slate-600">Km/L</th>
               <th className="text-right px-3 py-2.5 font-medium text-slate-600">Gastos</th>
               <th className="text-right px-3 py-2.5 font-medium text-slate-600">Total</th>
@@ -272,7 +273,7 @@ export default function InformesClient({ fecha, informes: initialInformes, buses
           </thead>
           <tbody>
             {informes.map(inf => {
-              const kmL = inf.cons_xkm && inf.cons_xkm > 0 ? 1 / inf.cons_xkm : null
+              const kmL = inf.km_por_litro
               const totalVueltas = (inf.vueltas_cond ?? 0) + (inf.vueltas_rel ?? 0)
               const promVuelta = totalVueltas > 0 && inf.subtotal != null ? inf.subtotal / totalVueltas : null
               return (
@@ -308,9 +309,12 @@ export default function InformesClient({ fecha, informes: initialInformes, buses
                   </td>
                   <td className="px-3 py-2 text-right text-amber-600">{fmt(inf.petrol_monto)}</td>
                   <td className="px-3 py-2 text-right text-slate-500">{fmtNum(inf.petrol_litros, 1)} L</td>
-                  <td className="px-3 py-2 text-right text-slate-500">{fmtNum(inf.km_recorridos)} km</td>
+                  <td className="px-3 py-2 text-right text-slate-500">{inf.km_recorridos != null && inf.km_recorridos > 0 ? inf.km_recorridos.toLocaleString('es-CL') : '—'}</td>
+                  <td className="px-3 py-2 text-right text-slate-500">
+                    {inf.km_entre_cargas != null && inf.km_entre_cargas > 0 ? `${inf.km_entre_cargas.toLocaleString('es-CL')} km` : <span className="text-slate-300 text-xs">1ª carga</span>}
+                  </td>
                   <td className="px-3 py-2 text-right text-blue-600 font-medium">
-                    {kmL != null ? fmtNum(kmL, 1) : '—'}
+                    {kmL != null ? fmtNum(kmL, 1) : <span className="text-slate-300 text-xs">—</span>}
                   </td>
                   <td className="px-3 py-2 text-right text-slate-600">{fmt(inf.gastos_caja)}</td>
                   <td className={cn('px-3 py-2 text-right font-bold', (inf.total_neto ?? 0) >= 0 ? 'text-green-700' : 'text-red-600')}>
@@ -334,7 +338,7 @@ export default function InformesClient({ fecha, informes: initialInformes, buses
             })}
             {informes.length === 0 && (
               <tr>
-                <td colSpan={17} className="px-4 py-8 text-center text-slate-400">
+                <td colSpan={18} className="px-4 py-8 text-center text-slate-400">
                   No hay registros para esta fecha
                 </td>
               </tr>
@@ -501,9 +505,12 @@ export default function InformesClient({ fecha, informes: initialInformes, buses
                 <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-3">Combustible y kilómetros</p>
                 <div className="grid grid-cols-3 gap-3">
                   <F label="Petróleo $"><input type="number" value={form.petrol_monto} onChange={e => setForm(f => ({ ...f, petrol_monto: e.target.value }))} className="inp" /></F>
-                  <F label="Litros"><input type="number" value={form.petrol_litros} onChange={e => setForm(f => ({ ...f, petrol_litros: e.target.value }))} className="inp" /></F>
-                  <F label="Km recorridos"><input type="number" value={form.km_recorridos} onChange={e => setForm(f => ({ ...f, km_recorridos: e.target.value }))} className="inp" /></F>
+                  <F label="Litros cargados"><input type="number" value={form.petrol_litros} onChange={e => setForm(f => ({ ...f, petrol_litros: e.target.value }))} className="inp" /></F>
+                  <F label="Km odómetro al cargar">
+                    <input type="number" value={form.km_recorridos} onChange={e => setForm(f => ({ ...f, km_recorridos: e.target.value }))} className="inp" placeholder="ej: 125430" />
+                  </F>
                 </div>
+                <p className="text-xs text-slate-400 -mt-2">El rendimiento km/L se calcula automáticamente comparando con la carga anterior del mismo bus.</p>
               </div>
 
               {/* Gastos y bonos */}

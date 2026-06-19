@@ -50,6 +50,7 @@ export interface InformeDiarioVista extends InformeDiarioRow {
   conductor_nombre: string; relevo_nombre: string
   subtotal: number; pro_cond: number | null; pro_rel: number | null
   vuel_total: number; unid_petr: number | null; cons_xkm: number | null; total_neto: number
+  km_odometro_anterior: number | null; km_entre_cargas: number | null; km_por_litro: number | null
 }
 
 // ---- Database type for Supabase client ----

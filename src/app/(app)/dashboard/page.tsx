@@ -31,9 +31,9 @@ export default async function DashboardPage() {
 
       supabase
         .from('informes_diarios')
-        .select('bus_id, fecha, km_recorridos')
-        .gte('fecha', hace(90))
-        .not('km_recorridos', 'is', null),
+        .select('bus_id, km_recorridos')
+        .not('km_recorridos', 'is', null)
+        .gt('km_recorridos', 0),
 
       supabase
         .from('v_informes_diarios')
@@ -50,14 +50,16 @@ export default async function DashboardPage() {
     }
   }
 
-  // Km driven per bus since last mantención
+  // Km desde última mantención usando odómetro: max(km_recorridos) - km_actual mantención
   const alertasMant: { patente: string; kmDesde: number; fechaMant: string | null }[] = []
   for (const bus of buses ?? []) {
     const mant = ultimaMant.get(bus.id)
-    const fechaDesde = mant?.fecha ?? hace(365)
-    const kmDesde = (kmRecorridos ?? [])
-      .filter(r => r.bus_id === bus.id && r.fecha >= fechaDesde)
-      .reduce((s, r) => s + (r.km_recorridos ?? 0), 0)
+    const registrosBus = (kmRecorridos ?? []).filter(r => r.bus_id === bus.id)
+    if (registrosBus.length === 0) continue
+    const maxOdometro = Math.max(...registrosBus.map(r => r.km_recorridos ?? 0))
+    const kmDesde = mant?.km_actual != null
+      ? maxOdometro - mant.km_actual
+      : maxOdometro
 
     if (kmDesde >= ALERTA_KM * 0.7) {
       alertasMant.push({
