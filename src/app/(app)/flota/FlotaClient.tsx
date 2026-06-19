@@ -113,27 +113,28 @@ export default function FlotaClient({ buses: initialBuses, modelos }: Props) {
   const enMantencion = buses.filter(b => b.estado === 'mantencion').length
 
   return (
-    <div className="p-6 max-w-6xl mx-auto">
-      <div className="flex items-center justify-between mb-6">
+    <div className="p-4 md:p-6 max-w-6xl mx-auto">
+      <div className="flex items-center justify-between mb-4 md:mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Flota</h1>
-          <p className="text-sm text-slate-500 mt-0.5">
+          <h1 className="text-xl md:text-2xl font-bold text-slate-900">Flota</h1>
+          <p className="text-xs md:text-sm text-slate-500 mt-0.5">
             {buses.length} vehículos &mdash; {activos} activos, {enMantencion} en mantención
           </p>
         </div>
         <button
           onClick={openNew}
-          className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors"
+          className="flex items-center gap-2 px-3 md:px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
           </svg>
-          Agregar bus
+          <span className="hidden sm:inline">Agregar bus</span>
+          <span className="sm:hidden">Agregar</span>
         </button>
       </div>
 
       {/* Tabla de flota */}
-      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+      <div className="bg-white rounded-xl border border-slate-200 overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-slate-200 bg-slate-50">
@@ -187,8 +188,8 @@ export default function FlotaClient({ buses: initialBuses, modelos }: Props) {
 
       {/* Modal de formulario */}
       {showForm && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl shadow-xl w-full max-w-lg">
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-end sm:items-center justify-center sm:p-4">
+          <div className="bg-white rounded-t-2xl sm:rounded-xl shadow-xl w-full sm:max-w-lg max-h-[92vh] overflow-y-auto">
             <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between">
               <h2 className="font-semibold text-slate-900">
                 {editingBus ? `Editar ${editingBus.patente}` : 'Nuevo vehículo'}

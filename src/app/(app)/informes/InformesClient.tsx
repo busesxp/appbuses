@@ -173,8 +173,8 @@ export default function InformesClient({ fecha, informes: initialInformes, buses
   const totalAnts = informes.reduce((s, i) => s + (i.ant_cond ?? 0) + (i.ant_rel ?? 0), 0)
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
-      <div className="flex items-center justify-between mb-6">
+    <div className="p-4 md:p-6 max-w-7xl mx-auto">
+      <div className="flex items-center justify-between mb-4 md:mb-6">
         <div>
           <h1 className="text-2xl font-bold text-slate-900">Informe Diario</h1>
           <div className="flex items-center gap-3 mt-1">
@@ -207,7 +207,7 @@ export default function InformesClient({ fecha, informes: initialInformes, buses
       </div>
 
       {/* Resumen del día */}
-      <div className="grid grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4 md:mb-6">
         {[
           { label: 'Boletaje total', value: fmt(totalBoletaje), color: 'text-blue-600' },
           { label: 'Combustible', value: fmt(totalComb), color: 'text-amber-600' },
@@ -222,7 +222,7 @@ export default function InformesClient({ fecha, informes: initialInformes, buses
       </div>
 
       {/* Tabla informe */}
-      <div className="bg-white rounded-xl border border-slate-200 overflow-x-auto mb-6">
+      <div className="bg-white rounded-xl border border-slate-200 overflow-x-auto mb-4 -mx-4 md:mx-0 rounded-none md:rounded-xl border-x-0 md:border-x">
         <table className="w-full text-sm min-w-max">
           <thead>
             <tr className="border-b border-slate-200 bg-slate-50">
@@ -319,8 +319,8 @@ export default function InformesClient({ fecha, informes: initialInformes, buses
 
       {/* Modal de formulario de informe */}
       {showForm && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-end sm:items-center justify-center sm:p-4">
+          <div className="bg-white rounded-t-2xl sm:rounded-xl shadow-xl w-full sm:max-w-2xl max-h-[95vh] overflow-y-auto">
             <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between sticky top-0 bg-white z-10">
               <h2 className="font-semibold text-slate-900">
                 {editingId ? 'Editar registro' : 'Nuevo registro'} — {fechaVer}
@@ -448,8 +448,8 @@ export default function InformesClient({ fecha, informes: initialInformes, buses
 
       {/* Modal cierre del día */}
       {showCierreForm && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl shadow-xl w-full max-w-sm">
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-end sm:items-center justify-center sm:p-4">
+          <div className="bg-white rounded-t-2xl sm:rounded-xl shadow-xl w-full sm:max-w-sm">
             <div className="px-6 py-4 border-b border-slate-200">
               <h2 className="font-semibold text-slate-900">Cierre del día — {fechaVer}</h2>
             </div>
