@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
 
 export default function LoginPage() {
@@ -34,10 +35,8 @@ export default function LoginPage() {
       <div className="w-full max-w-sm">
         <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-8">
           <div className="mb-8 text-center">
-            <div className="inline-flex items-center justify-center w-14 h-14 bg-blue-600 rounded-xl mb-4">
-              <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
-              </svg>
+            <div className="flex justify-center mb-4">
+              <Image src="/logo.png" alt="Buses XP" width={100} height={64} className="object-contain" />
             </div>
             <h1 className="text-xl font-bold text-slate-900">Buses XP</h1>
             <p className="text-sm text-slate-500 mt-1">Gestión de Flota — Grupo XP</p>
